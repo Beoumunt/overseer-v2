@@ -1,8 +1,13 @@
 import { z } from 'zod';
 
+const mongoUriRegex = /^mongodb(\+srv)?:\/\/.+/;
+
 const envSchema = z.object({
   DISCORD_TOKEN: z.string().min(1, "Brak tokenu Discorda"),
-  MONGO_URI: z.string().url("Niepoprawny format MONGO_URI"),
+  MONGO_URI: z.string().regex(
+    mongoUriRegex,
+    "Niepoprawny format MONGO_URI. Powinien zaczynać się od mongodb:// lub mongodb+srv://"
+  ),
   PORT: z.coerce.number().default(3000),
 
   GUILD_MAIN_ID: z.string().optional(),

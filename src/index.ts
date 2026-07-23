@@ -17,7 +17,7 @@ async function bootstrap() {
   await connectDatabase();
 
   // 2. Obsługa gotowości bota
-  client.once('ready', () => {
+  client.once('clientReady', () => {
     logger.info(`✅ Overseer v2.0 zalogowany jako ${client.user?.tag}`);
   });
 
@@ -26,5 +26,5 @@ async function bootstrap() {
 }
 
 bootstrap().catch((err) => {
-  logger.error('🔥 Fatalny błąd podczas startu:', err);
+  logger.error('🔥 Fatalny błąd podczas startu: %o', err);
 });
