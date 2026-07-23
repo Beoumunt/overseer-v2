@@ -1,0 +1,53 @@
+Member {
+  discordId: "123456789012345678",
+  name: "Baran",
+  alias: "Owca",
+
+  createdAt: Date,
+  updatedAt: Date,
+
+  memberships: {
+    recruitment: {
+      guildId: "GUILD_RECRUITMENT_ID",
+      isPresent: true,
+      joinedAt: null,
+      leftAt: null,
+      lastSyncedAt: Date
+    },
+    main: {
+      guildId: "GUILD_MAIN_ID",
+      isPresent: true,
+      joinedAt: null,
+      leftAt: null,
+      lastSyncedAt: Date
+    },
+    embassy: {
+      guildId: "GUILD_EMBASSY_ID",
+      isPresent: true,
+      joinedAt: null,
+      leftAt: null,
+      lastSyncedAt: Date
+    },
+    market: {
+      guildId: "GUILD_MARKET_ID",
+      isPresent: false,
+      joinedAt: null,
+      leftAt: null,
+      lastSyncedAt: Date
+    }
+  },
+
+  mainRoles: {
+    candidate: false,
+    recruit: false,
+    guest: false,
+    darkStar: true,
+    merchant: true,
+    enlister: false
+    diplomat: true,
+    oficer: false,
+    liche: false,
+    ambassador: false
+    emperor: false
+  },
+}
