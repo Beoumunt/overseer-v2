@@ -45,7 +45,7 @@ Member {
     merchant: true,
     enlister: false
     diplomat: true,
-    oficer: false,
+    officer: false,
     liche: false,
     ambassador: false
     emperor: false
