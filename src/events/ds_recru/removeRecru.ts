@@ -1,0 +1,1 @@
+// tutaj logika jak ktoś wyjdzie z recru

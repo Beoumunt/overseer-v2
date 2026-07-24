@@ -1,4 +1,5 @@
 import { Client, GatewayIntentBits } from 'discord.js';
+import { syncAllMembersOnStartup } from './services/syncMembers';
 import { env } from './lib/env';
 import { logger } from './lib/logger';
 import { connectDatabase } from './db/dbConnection';
@@ -17,8 +18,10 @@ async function bootstrap() {
   await connectDatabase();
 
   // 2. Obsługa gotowości bota
-  client.once('clientReady', () => {
+  client.once('clientReady', async () => {
     logger.info(`✅ Overseer v2.0 zalogowany jako ${client.user?.tag}`);
+
+    await syncAllMembersOnStartup(client);
   });
 
   // 3. Logowanie
