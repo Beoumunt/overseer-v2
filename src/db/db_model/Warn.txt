@@ -1,7 +1,0 @@
-Warn {
-  id: number (unique)    
-  createdAt: Date                 // Data Warna      
-  description: String             // Opis Warna
-  warnedMemberID: 0123456789012345678
-  moderatorID: 0123456789012345678
-}

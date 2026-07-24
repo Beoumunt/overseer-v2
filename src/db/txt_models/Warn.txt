@@ -1,0 +1,10 @@
+Warn {
+  _id: ObjectId                   // auto MongoDB (używamy jako unikalny ID warna)
+
+  warnedMemberId: String          // discordId ukaranego użytkownika (ref → Member.discordId)
+  moderatorId: String             // discordId moderatora wystawiającego warna
+
+  description: String             // opis przewinienia
+
+  createdAt: Date                 // data wystawienia warna
+}

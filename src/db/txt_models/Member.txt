@@ -1,0 +1,44 @@
+Member {
+  _id: ObjectId                   // auto MongoDB
+
+  discordId: String (unique)      // ID użytkownika na Discordzie
+  username: String                // nazwa konta Discord (np. "baran")
+  displayName: String             // wyświetlana nazwa (nick na serwerze)
+
+  // ── Obecność na serwerach klastra ─────────────────────────────────────────
+  memberships: {
+    recruitment: {
+      guildId: String             // wartość ze zmiennej środowiskowej GUILD_RECRUITMENT_ID
+      isPresent: Boolean          // czy aktualnie jest na serwerze
+      joinedAt: Date | null
+      leftAt: Date | null
+      lastSyncedAt: Date
+    },
+    main: {
+      guildId: String             // GUILD_MAIN_ID
+      isPresent: Boolean
+      joinedAt: Date | null
+      leftAt: Date | null
+      lastSyncedAt: Date
+    },
+    embassy: {
+      guildId: String             // GUILD_EMBASSY_ID
+      isPresent: Boolean
+      joinedAt: Date | null
+      leftAt: Date | null
+      lastSyncedAt: Date
+    },
+    market: {
+      guildId: String             // GUILD_MARKET_ID
+      isPresent: Boolean
+      joinedAt: Date | null
+      leftAt: Date | null
+      lastSyncedAt: Date
+    }
+  },
+
+  mainRoles: [String],            // np. ["darkStar", "diplomat"]
+
+  createdAt: Date,
+  updatedAt: Date
+}

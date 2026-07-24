@@ -1,0 +1,13 @@
+RoleDefinition {
+  _id: ObjectId                   // auto MongoDB
+
+  name: String (unique)           // klucz systemowy, np. "darkStar", "diplomat"
+                                  // Możliwe nowe wartości poza tymi: candidate | recruit | guest |
+                                  //   darkStar | enlister | diplomat | officer |
+                                  //   liche | ambassador | emperor
+
+  displayName: String             // czytelna nazwa, np. "Dark Star", "Dyplomata"
+  description: String             // opis roli, np. "Pełnoprawny członek klanu"
+
+  createdAt: Date
+}

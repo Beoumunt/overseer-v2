@@ -1,0 +1,18 @@
+GuildConfig {
+  _id: ObjectId                   // auto MongoDB
+
+  guildId: String (unique)        // ID serwera Discord
+  guildName: String               // Nazwa serwera (dla czytelności logów)
+
+  // ── Komendy dostępne na tym serwerze ─────────────────────────────────────
+  enabledCommands: [String]       // referencje do CommandConfig.name
+                                  // np. ["ban", "recruit", "stats"]
+
+  // ── Mapowanie mainRoles → Discord Role ID dla tego serwera ───────────────
+  // Klucz: RoleDefinition.name  |  Wartość: ID rangi na tym konkretnym serwerze
+  // Jeśli ranga nie istnieje na danym serwerze, po prostu jej tu nie ma.
+  // Dodanie nowej rangi do systemu = dodanie klucza tutaj, bez zmiany schematu.
+  roles: Map<String, String>      // np. { "darkStar": "987654321098765432", "diplomat": "876543210987654321" }
+
+  updatedAt: Date
+}

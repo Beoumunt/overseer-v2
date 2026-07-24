@@ -1,0 +1,16 @@
+CommandConfig {
+  _id: ObjectId                   // auto MongoDB
+
+  name: String (unique)           // klucz komendy, np. "ban", "recruit", "warn"
+  description: String             // opis komendy, wyświetlany w /help
+
+  // ── Kto może używać tej komendy ──────────────────────────────────────────
+  // Tablica referencji do RoleDefinition.name
+  // Pusta tablica = komenda dostępna dla wszystkich (np. /stats)
+  // Dodanie nowej mainRole do systemu nie wymaga zmiany schematu CommandConfig —
+  // wystarczy dodać jej nazwę do tej tablicy tam gdzie potrzeba.
+  
+  allowedRoles: [String]          // np. ["officer", "liche", "emperor"]
+
+  isActive: Boolean               // czy komenda jest globalnie aktywna
+}
