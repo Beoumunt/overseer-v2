@@ -1,0 +1,49 @@
+*********************************************************
+* DARK STAR REKRUTACJA                                      
+*********************************************************
+✅addRecru
+❌    - dodać wiadomość na kanale na ds_recru
+
+removeRecru
+❌    - dodać wiadomośc na kanale na ds_rectu
+❌        UWAGA: w przypadku awansu z reckru -> main ta wiadomość nie powinna być wyświetlana
+
+
+*********************************************************
+* DARK STAR MARKET                                      
+*********************************************************
+addMarket
+❌    - wysłać wiadomość do użytkownika który nie ma wstępu na market, że nie jest członkiem dark star
+
+❌removeMarket
+❌    - tutaj wystarczy zrobic tylko syncMemeber
+
+
+*********************************************************
+* DARK STAR AMBASADA                                     
+*********************************************************
+❌addEmbassy
+❌    - każda nowa osoba wchodząca na dc powinna dostawać swoją własną sekcje wraz z rangą ambasador
+❌          -UWAGA: niedotyczy to osób z rangą: Diplomat, Oficer, Liche, Emperor; zwykli gildiowicze nie powinni mieć tu wstępu
+    
+❌removeEmbassy
+❌    - tutaj wystarczy zrobic tylko syncMember
+
+
+*********************************************************
+* DARK STAR MAIN                                    
+*********************************************************
+
+❌addMain
+❌      - trzeba sprawdzić czy osoba posiada w bazie danych rangę Rekrut 
+❌          - jeśli nie to wiadomość, że nie ta osoba nie przeszłą rekrutacji i należy przejsć na ten dc:
+❌      - następnie trzeba nadać rangi i po nadaniu tych rang usunąć tą osobę z ds_recru
+❌      - syncMember
+❌      - wiadomość na kanale, że osoba przeszła rekrutacje
+
+removeMain
+❌      - dodać na kanale że osoba wyszła
+❌          - PROBLEM: jak odróżnic osobę darkSTar która wyszła od osoby która nielegalnie próbowała wejść na discord?
+❌      - usunąć tą osobe ZE WSZYSTKICH discordów w klastrze
+❌      - syncMember
+    

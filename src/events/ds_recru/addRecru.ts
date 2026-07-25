@@ -1,19 +1,35 @@
 import { GuildMember } from 'discord.js';
+import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { logger } from '../../lib/logger';
-import { upsertMember, type MembershipsIncoming } from '../../services/memberService';
+import { syncMember } from '../../sync/syncMembers';
 
 async function addRecru(member: GuildMember) {
-  // Tutaj w przyszłości dodasz: 
-  // 1. Sprawdzenie/stworzenie MemberModel
-  // 2. Nadanie roli Candidate z GuildConfig
-  upsertMember({
-    member,
-    memberships: {} as MembershipsIncoming,
-    mainRoles: []
-  });
-  
 
-  logger.info(`Dodano ${member.user.tag} do recru.`);
+  if (member.user.bot) return;
+
+  const cfg = await GuildConfigModel.findOne({ guildId: member.guild.id }).lean();
+  const candidateRoleId = cfg?.roles?.candidate;
+  if (!candidateRoleId) {
+    logger.warn(`addRecru: brak roli candidate w GuildConfig dla guild ${member.guild.id}`);
+    return;
+  }
+
+  try {
+    const role = member.guild.roles.cache.get(candidateRoleId) ?? await member.guild.roles.fetch(candidateRoleId).catch(() => null);
+    if (!role) {
+      logger.warn(`addRecru: nie znaleziono roli candidate ${candidateRoleId} w guild ${member.guild.id}`);
+      return;
+    }
+
+    // Nadanie roli candidate
+    await member.roles.add(role);
+    logger.info(`addRecru: nadano rolę candidate ${role.name} (${role.id}) dla ${member.user.tag} w guild ${member.guild.id}`);
+    // Synchronizacja uzytkownika z bazą danych
+    await syncMember(member);
+
+  } catch (error) {
+    logger.error(`addRecru: błąd podczas nadawania roli candidate dla ${member.user.tag} w guild ${member.guild.id}: ${String(error)}`);
+  }
 }
 
 export { addRecru };

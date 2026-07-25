@@ -1,5 +1,6 @@
 import { Events, GuildMember } from 'discord.js';
 import { addRecru } from './ds_recru/addRecru';
+import { addMarket } from './ds_market/addMarket';
 import { logger } from '../lib/logger';
 import { env } from '../lib/env'; // Potrzebne do sprawdzenia ID serwera
 
@@ -20,12 +21,11 @@ export async function execute(member: GuildMember) {
     if (member.guild.id === env.GUILD_EMBASSY_ID) { 
         await addMain(member); 
     }
+    */
 
     if (member.guild.id === env.GUILD_MARKET_ID) { 
-        await addMain(member); 
+        await addMarket(member); 
     }
-
-    */
     
   } catch (error) {
     logger.error('Błąd w guildMemberAdd: %o', error instanceof Error ? error.message : String(error));
