@@ -73,7 +73,7 @@ export async function seedRanksIds(): Promise<number> {
     },
     [String(env.GUILD_RECRUITMENT_ID)]: { // recru
       candidate:  '1530508653537263686',
-      recruit:    '1530508653537263686',
+      recruit:    '1530508688828403762',
       guest:      '',
       darkStar:   '',
       enlister:   '1530508517629235250',
