@@ -1,8 +1,9 @@
 import { Client, GatewayIntentBits } from 'discord.js';
-import { syncAllMembersOnStartup } from './services/syncMembers';
+import { syncAllMembersOnStartup } from './sync/syncAllMembersOnStartup';
 import { env } from './lib/env';
 import { logger } from './lib/logger';
 import { connectDatabase } from './db/dbConnection';
+import { registerEvents } from './events/eventsHandler';
 
 const client = new Client({
   intents: [
@@ -23,6 +24,9 @@ async function bootstrap() {
 
     await syncAllMembersOnStartup(client);
   });
+
+  // 3. Zarejestruj eventy
+  registerEvents(client);
 
   // 3. Logowanie
   await client.login(env.DISCORD_TOKEN);
