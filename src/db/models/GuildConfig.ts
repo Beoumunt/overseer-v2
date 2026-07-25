@@ -7,6 +7,7 @@ export interface IGuildConfig extends Document {
     enabledCommands: string[];
 
     roles: Map<string, string>;
+    channels: Map<string, string>;
 }
 
 const GuildConfigSchema = new Schema<IGuildConfig>({
@@ -14,6 +15,10 @@ const GuildConfigSchema = new Schema<IGuildConfig>({
     guildName: { type: String, required: true },
     enabledCommands: [{ type: String }],
     roles: {
+        type: Map,
+        of: { type: String }
+    },
+    channels: {
         type: Map,
         of: { type: String }
     }

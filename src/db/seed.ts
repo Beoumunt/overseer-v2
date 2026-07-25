@@ -32,19 +32,20 @@ async function seed() {
 
     // 3. Wstawiamy CommandConfig
     const commands = [
-      { name: 'warn', description: 'Nakłada warna', allowedRoles: ['officer', 'liche', 'emperor'] },
-      { name: 'recruit', description: 'Akceptuje użytkownika po rekrutacji', allowedRoles: ['enlister', 'officer', 'liche', 'emperor'] },
-      { name: 'promote', description: 'Promocja użytkownika po głosowym wprowadzeniu do Dark Star', allowedRoles: [ 'enlister', 'officer', 'liche', 'emperor'] }
+      { name: 'warn',    description: 'Nakłada warna',                                                  allowedRoles: [ 'officer', 'liche', 'emperor' ]},
+      { name: 'recruit', description: 'Akceptuje użytkownika po rekrutacji',                            allowedRoles: [ 'enlister', 'officer', 'liche', 'emperor' ]},
+      { name: 'promote', description: 'Promocja użytkownika po głosowym wprowadzeniu do Dark Star',     allowedRoles: [ 'enlister', 'officer', 'liche', 'emperor' ]}
     ];
     await CommandConfigModel.insertMany(commands);
     logger.info(`✅ Wstawiono ${commands.length} definicji komend.`);
 
     // 4. Wstawiamy GuildConfig dla 4 serwerów (dane z .env)
+    // Uwaga: role oraz channels w GuildConfig są puste, zostaną uzupełnione w seedRanksId() oraz seedChannelsId()
     const guilds = [
-      { guildId: env.GUILD_RECRUITMENT_ID, guildName: 'DS Recruitment', enabledCommands: ['recruit'], roles: new Map() },
-      { guildId: env.GUILD_MAIN_ID, guildName: 'DS Main', enabledCommands: ['warn', 'promote'], roles: new Map() },
-      { guildId: env.GUILD_EMBASSY_ID, guildName: 'DS Embassy', enabledCommands: [], roles: new Map() },
-      { guildId: env.GUILD_MARKET_ID, guildName: 'DS Market', enabledCommands: [], roles: new Map() }
+      { guildId: env.GUILD_RECRUITMENT_ID, guildName: 'DS Recruitment',   enabledCommands: ['recruit'],         roles: new Map(), channels: new Map(), },
+      { guildId: env.GUILD_MAIN_ID, guildName: 'DS Main',                 enabledCommands: ['warn', 'promote'], roles: new Map(), channels: new Map(), },
+      { guildId: env.GUILD_EMBASSY_ID, guildName: 'DS Embassy',           enabledCommands: [],                  roles: new Map(), channels: new Map(), },
+      { guildId: env.GUILD_MARKET_ID, guildName: 'DS Market',             enabledCommands: [],                  roles: new Map(), channels: new Map(), }
     ];
     await GuildConfigModel.insertMany(guilds);
     logger.info(`✅ Skonfigurowano ${guilds.length} serwerów klastra.`);
@@ -52,12 +53,11 @@ async function seed() {
     logger.info('✨ Seedowanie zakończone sukcesem!');
   } catch (error) {
     logger.error('❌ Błąd podczas seedowania: %o', error instanceof Error ? error.message : String(error));
-    throw error; // pozwól callerowi obsłużyć i zakończyć proces
+    throw error;
   }
 }
 
-export async function seedRanksId(): Promise<number> {
-  // <-- TU UZUPEŁNIJ: zamień placeholdery na rzeczywiste ID serwerów i ról -->
+export async function seedRanksIds(): Promise<number> {
   const GUILD_ROLE_MAP: Record<string, Record<string, string>> = {
     [String(env.GUILD_MAIN_ID)]: { // main
       candidate:  '',
@@ -109,18 +109,8 @@ export async function seedRanksId(): Promise<number> {
     },
   };
 
-  logger.info('seedRanksId: starting');
-  logger.info('seedRanksId: env GUILD ids %o', {
-    main: env.GUILD_MAIN_ID,
-    recruit: env.GUILD_RECRUITMENT_ID,
-    embassy: env.GUILD_EMBASSY_ID,
-    market: env.GUILD_MARKET_ID
-  });
-  logger.info('seedRanksId: GUILD_ROLE_MAP keys %o', Object.keys(GUILD_ROLE_MAP));
-
   const entries = Object.entries(GUILD_ROLE_MAP);
   if (entries.length === 0) {
-    logger.warn('seedRanksId: GUILD_ROLE_MAP jest pusty — uzupełnij ID ról przed uruchomieniem.');
     return 0;
   }
 
@@ -128,11 +118,10 @@ export async function seedRanksId(): Promise<number> {
   for (const [guildId, rolesMap] of entries) {
     try {
       if (!guildId) {
-        logger.warn('seedRanksId: pominieto wpis z pustym guildId: %o', { rolesMap });
         continue;
       }
 
-      logger.debug('seedRanksId: updating %o', { guildId, rolesCount: Object.keys(rolesMap).length });
+      logger.debug('seedRanksIds: updating %o', { guildId, rolesCount: Object.keys(rolesMap).length });
 
       await GuildConfigModel.findOneAndUpdate(
         { guildId },
@@ -142,14 +131,65 @@ export async function seedRanksId(): Promise<number> {
         },
         { upsert: true }
       ).exec();
-      logger.info(`seedRanksId: zaktualizowano/utworzono GuildConfig dla ${guildId}`);
+      logger.info(`seedRanksIds: zaktualizowano/utworzono GuildConfig dla ${guildId}`);
       updatedCount++;
     } catch (error) {
-      logger.error(`seedRanksId: błąd przy aktualizacji GuildConfig ${guildId}: %o`, error instanceof Error ? error.message : String(error));
+      logger.error(`seedRanksIds: błąd przy aktualizacji GuildConfig ${guildId}: %o`, error instanceof Error ? error.message : String(error));
     }
   }
 
-  logger.info(`seedRanksId: zakończono — zaktualizowano ${updatedCount} wpisów.`);
+  logger.info(`seedRanksIds: zakończono — zaktualizowano ${updatedCount} wpisów.`);
+  return updatedCount;
+}
+
+export async function seedChannelsId(): Promise<number> {
+  const GUILD_CHANNEL_MAP: Record<string, Record<string, string>> = {
+    [String(env.GUILD_MAIN_ID)]: {
+      welcome:        '1289877668812296264',
+      note:           '1289877668812296267',
+      news:           '1289877668812296268'
+    },
+    [String(env.GUILD_RECRUITMENT_ID)]: {
+      welcome:        '1529732575684329554'
+    },
+    [String(env.GUILD_MARKET_ID)]: {
+      announcements:  '1529784832115216516'
+    },
+    [String(env.GUILD_EMBASSY_ID)]: {
+      welcome:        '1529732829330804779',
+      botRaport:      '1530650084075765831'
+    }
+  };
+
+  const entries = Object.entries(GUILD_CHANNEL_MAP);
+  if (entries.length === 0) return 0;
+
+  let updatedCount = 0;
+
+  for (const [guildId, channelsMap] of entries) {
+    try {
+      if (!guildId) continue;
+
+      await GuildConfigModel.findOneAndUpdate(
+        { guildId },
+        {
+          $set: { channels: channelsMap },
+          $setOnInsert: { guildName: '', enabledCommands: [] }
+        },
+        { upsert: true, new: true }
+      ).exec();
+
+      logger.info(`seedChannelsId: zaktualizowano/utworzono GuildConfig.channels dla ${guildId}`);
+      updatedCount++;
+    } catch (error) {
+      logger.error(
+        `seedChannelsId: błąd przy aktualizacji GuildConfig ${guildId}: %o`,
+        error instanceof Error ? error.message : String(error)
+      );
+    }
+  }
+
+  logger.info(`seedChannelsId: zakończono — zaktualizowano ${updatedCount} wpisów.`);
   return updatedCount;
 }
 
@@ -163,9 +203,13 @@ async function runAll() {
     await seed();
     logger.info('runAll: seed() zakończony.');
 
-    logger.info('runAll: uruchamiam seedRanksId()...');
-    const updated = await seedRanksId();
-    logger.info(`runAll: seedRanksId() zakończone, zaktualizowano ${updated} wpisów.`);
+    logger.info('runAll: uruchamiam seedRanksIds()...');
+    const updated = await seedRanksIds();
+    logger.info(`runAll: seedRanksIds() zakończone, zaktualizowano ${updated} wpisów.`);
+
+    logger.info('runAll: uruchamiam seedChannelsId()...');
+    const updatedChannels = await seedChannelsId();
+    logger.info(`runAll: seedChannelsId() zakończone, zaktualizowano ${updatedChannels} wpisów.`);
 
     logger.info('runAll: wszystkie operacje zakończone pomyślnie.');
     process.exit(0);

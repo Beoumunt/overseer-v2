@@ -2,8 +2,10 @@ import { GuildMember } from 'discord.js';
 import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
+import { recruWelcomeEmbed } from '../../utils/embeds';
+import { sendEmbed } from '../../utils/embedBuilder';
 
-async function addRecru(member: GuildMember) {
+export async function addRecru(member: GuildMember) {
 
   if (member.user.bot) return;
 
@@ -27,9 +29,20 @@ async function addRecru(member: GuildMember) {
     // Synchronizacja uzytkownika z bazą danych
     await syncMember(member);
 
+    // Wysłanie wiadomości na kanał o tym, że użytkownik dołączył do serwera rekrutacyjnego
+    const welcomeChannelId = cfg?.channels?.welcome;
+
+    if (!welcomeChannelId) {
+      return;
+    } else {
+      const channel = member.guild.channels.cache.get(welcomeChannelId) ?? await member.guild.channels.fetch(welcomeChannelId).catch(() => null);
+      if (!channel || !channel.isTextBased()) {
+        return;
+      }
+      sendEmbed(channel, recruWelcomeEmbed(member));
+    }
+
   } catch (error) {
     logger.error(`addRecru: błąd podczas nadawania roli candidate dla ${member.user.tag} w guild ${member.guild.id}: ${String(error)}`);
   }
 }
-
-export { addRecru };

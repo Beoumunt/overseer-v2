@@ -14,5 +14,7 @@ GuildConfig {
   // Dodanie nowej rangi do systemu = dodanie klucza tutaj, bez zmiany schematu.
   roles: Map<String, String>      // np. { "darkStar": "987654321098765432", "diplomat": "876543210987654321" }
 
+  channels: Map<String, String>   // np { "in-out": "123456789012345678", "note": "0123456789012345678"}
+
   updatedAt: Date
 }
