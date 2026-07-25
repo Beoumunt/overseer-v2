@@ -4,13 +4,16 @@ import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
 import { recruWelcomeEmbed } from '../../utils/embeds';
 import { sendEmbed } from '../../utils/embedBuilder';
+import { getMembershipKey } from '../../utils/membership';
 
 export async function addRecru(member: GuildMember) {
 
   if (member.user.bot) return;
 
-  const cfg = await GuildConfigModel.findOne({ guildId: member.guild.id }).lean();
+  const recruGuildId = getMembershipKey('recruitment');
+  const cfg = await GuildConfigModel.findOne({ guildId: recruGuildId }).lean();
   const candidateRoleId = cfg?.roles?.candidate;
+
   if (!candidateRoleId) {
     logger.warn(`addRecru: brak roli candidate w GuildConfig dla guild ${member.guild.id}`);
     return;

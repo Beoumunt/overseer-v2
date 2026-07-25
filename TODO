@@ -2,7 +2,7 @@
 * DARK STAR REKRUTACJA                                      
 *********************************************************
 ✅addRecru
-❌    - dodać wiadomość na kanale na ds_recru
+✅    - dodać wiadomość na kanale na ds_recru
 
 removeRecru
 ❌    - dodać wiadomośc na kanale na ds_rectu
@@ -13,10 +13,13 @@ removeRecru
 * DARK STAR MARKET                                      
 *********************************************************
 addMarket
-❌    - wysłać wiadomość do użytkownika który nie ma wstępu na market, że nie jest członkiem dark star
+✅    - wysłać wiadomość do użytkownika który nie ma wstępu na market, że nie jest członkiem dark star
+✅          - kick z serwera jeżeli nie ma jest członkiem dark star
+✅          - nadać rangę jeżeli nim jest
 
 ❌removeMarket
 ❌    - tutaj wystarczy zrobic tylko syncMemeber
+❌          - PROBLEM: jak odróżnic osobę darkStar która wyszła od osoby która nielegalnie próbowała wejść na discord?
 
 
 *********************************************************
@@ -43,7 +46,7 @@ addMarket
 
 removeMain
 ❌      - dodać na kanale że osoba wyszła
-❌          - PROBLEM: jak odróżnic osobę darkSTar która wyszła od osoby która nielegalnie próbowała wejść na discord?
+❌          - PROBLEM: jak odróżnic osobę darkStar która wyszła od osoby która nielegalnie próbowała wejść na discord?
 ❌      - usunąć tą osobe ZE WSZYSTKICH discordów w klastrze
 ❌      - syncMember
     
