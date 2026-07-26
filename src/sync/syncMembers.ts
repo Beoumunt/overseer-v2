@@ -1,6 +1,6 @@
 import { Client, GuildMember } from 'discord.js';
 import { GuildConfigModel } from '../db/models/GuildConfig';
-import { getMembershipKey } from '../utils/membership';
+import { getServerId } from '../utils/membership';
 import { upsertMember, type MembershipsIncoming } from '../services/memberService';
 import { logger } from '../lib/logger';
 
@@ -17,8 +17,12 @@ export async function buildSyncPayloadForMember(member: GuildMember) {
 
   await Promise.all(guildConfigs.map(async (cfg) => {
     const guildId: string = cfg.guildId;
-    const membershipKey = getMembershipKey(guildId);
+    const membershipKey = getServerId(guildId);
     const incomingTs = new Date();
+
+    if(!guildId || !membershipKey) {
+      return;
+    }
 
     try {
       let guild = client.guilds.cache.get(guildId);

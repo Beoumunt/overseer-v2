@@ -1,6 +1,7 @@
 import { Events, GuildMember } from 'discord.js';
 import { addRecru } from './ds_recru/addRecru';
 import { addMarket } from './ds_market/addMarket';
+import { addMain } from './ds_main/addMain';
 import { logger } from '../lib/logger';
 import { env } from '../lib/env'; // Potrzebne do sprawdzenia ID serwera
 
@@ -13,11 +14,11 @@ export async function execute(member: GuildMember) {
         await addRecru(member);
     }
     
-    /*
+    
     if (member.guild.id === env.GUILD_MAIN_ID) { 
         await addMain(member); 
     }
-
+    /*
     if (member.guild.id === env.GUILD_EMBASSY_ID) { 
         await addMain(member); 
     }

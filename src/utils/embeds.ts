@@ -1,6 +1,23 @@
 import { buildEmbed } from './embedBuilder';
 import type { GuildMember } from 'discord.js';
 
+
+// embedy wysyłane na DARK STAR MAIN
+
+export function mainIntruderEmbed(member: GuildMember) {
+  return buildEmbed({
+    title: `❌ UWAGA!`,
+    description: `Probowałeś dostać się na serwer Dark Star, ale nie jesteś członkiem Dark Star. Wszelkie ponowne próby dostania się na serwer będą skutkowały banem. Jeśli uważasz, że to pomyłka skontaktuj się z administracją Dark Star.`,
+  });
+}
+
+export function mainWelcomeEmbed(member: GuildMember) {
+  return buildEmbed({
+    title: `${member.user.username} przeszedł rekrutację!`,
+    description: `Cieszymy się, że do nas dołączyłeś, ${member.user.username}!`,
+  });
+}
+
 // embedy wysyłane na DARK STAR MARKET
 
 export function marketIntruderEmbed(member: GuildMember) {

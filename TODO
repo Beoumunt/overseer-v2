@@ -37,12 +37,12 @@ addMarket
 * DARK STAR MAIN                                    
 *********************************************************
 
-❌addMain
-❌      - trzeba sprawdzić czy osoba posiada w bazie danych rangę Rekrut 
-❌          - jeśli nie to wiadomość, że nie ta osoba nie przeszłą rekrutacji i należy przejsć na ten dc:
-❌      - następnie trzeba nadać rangi i po nadaniu tych rang usunąć tą osobę z ds_recru
-❌      - syncMember
-❌      - wiadomość na kanale, że osoba przeszła rekrutacje
+✅addMain
+✅      - trzeba sprawdzić czy osoba posiada w bazie danych rangę Rekrut 
+✅          - jeśli nie to wiadomość, że nie ta osoba nie przeszłą rekrutacji i należy przejsć na ten dc:
+✅      - następnie trzeba nadać rangi i po nadaniu tych rang usunąć tą osobę z ds_recru
+✅      - syncMember
+✅      - wiadomość na kanale, że osoba przeszła rekrutacje
 
 removeMain
 ❌      - dodać na kanale że osoba wyszła

@@ -37,7 +37,7 @@ export async function upsertMember(payload: SyncMemberPayload) {
   ).exec();
 
   logger.info(
-    `upsertMember: zsynchronizowano ${member.user.tag} — serwery: ${Object.keys(memberships).join(', ')}, roleCount: ${mainRoles.length}`
+    `upsertMember: zsynchronizowano ${member.user.tag}, roleCount: ${mainRoles.length}`
   );
 
   return doc;

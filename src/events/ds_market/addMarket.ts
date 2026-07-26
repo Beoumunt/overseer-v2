@@ -4,7 +4,7 @@ import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
 import { memberHasRole } from '../../utils/dbRoles';
-import { getMembershipKey } from '../../utils/membership';
+import { getServerId } from '../../utils/membership';
 import { sendEmbed } from '../../utils/embedBuilder';
 /*
     1. Sprawdzamy czy uzytkownik jest w ds_main i czy ma dangę darkStar
@@ -24,7 +24,7 @@ export async function addMarket(member: GuildMember) {
     return;
   }
 
-  const marketGuildId = getMembershipKey('market');
+  const marketGuildId = getServerId('market');
   const cfg = await GuildConfigModel.findOne({ guildId: marketGuildId }).lean();
   const darkStarRoleId = cfg?.roles?.darkStar;
 
