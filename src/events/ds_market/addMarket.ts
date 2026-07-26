@@ -6,6 +6,7 @@ import { syncMember } from '../../sync/syncMembers';
 import { memberHasRole } from '../../utils/dbRoles';
 import { getServerId } from '../../utils/membership';
 import { sendEmbed } from '../../utils/embedBuilder';
+import { getRoleFromMember } from '../../utils/discord';
 /*
     1. Sprawdzamy czy uzytkownik jest w ds_main i czy ma dangę darkStar
     2a. Jeśli tak: nadajemy mu rangę w markecie
@@ -33,7 +34,7 @@ export async function addMarket(member: GuildMember) {
   }
 
   try {
-    const role = member.guild.roles.cache.get(darkStarRoleId) ?? await member.guild.roles.fetch(darkStarRoleId).catch(() => null);
+    const role = await getRoleFromMember(member, darkStarRoleId);
     if (!role) {
       logger.warn(`addMarket: nie znaleziono roli darkStar ${darkStarRoleId} w guild ${member.guild.id}`);
       return;

@@ -6,6 +6,7 @@ import { syncMember } from '../../sync/syncMembers';
 import { memberHasRole } from '../../utils/dbRoles';
 import { getServerId } from '../../utils/membership';
 import { sendEmbed } from '../../utils/embedBuilder';
+import { getChannelFromMember, getGuildFromMember, getMemberFromGuild, getRoleFromMember } from '../../utils/discord';
 
 export async function addMain(member: GuildMember) {
     if (member.user.bot) return;
@@ -14,7 +15,7 @@ export async function addMain(member: GuildMember) {
     if (!await memberHasRole(member, ['recruit'], 'all')) {
         sendEmbed(member, mainIntruderEmbed(member));
         member.kick('Nie przeszedł rekrutacji, nie może przebywać na tym discordzie').catch(() => {});
-        logger.info(`addMain: wyrzucono ${member.user.tag} (${member.id}) z main, ponieważ nie posiada rangi recruit w bazie danych`);
+        logger.info(`addMain: wyrzucono ${member.user.tag} (${member.id}) z ds_main, ponieważ nie posiada rangi recruit w bazie danych`);
         return;
     }
 
@@ -23,19 +24,19 @@ export async function addMain(member: GuildMember) {
     const recruitRoleId = cfg?.roles?.recruit;
 
     if (!recruitRoleId) {
-        logger.warn(`addMain: brak roli recruit w GuildConfig dla guild ${member.guild.id} - ${mainGuildId}`);
+        logger.warn(`addMain: brak roli recruit w GuildConfig dla ds_main!`);
         return;
     }
 
     // Pobieramy obiekt roli z cache lub fetchujemy go, jeśli nie jest dostępny w cache
-    const role = member.guild.roles.cache.get(recruitRoleId) ?? await member.guild.roles.fetch(recruitRoleId).catch(() => null);
+    const role = await getRoleFromMember(member, recruitRoleId);
     if (!role) {
-        logger.warn(`addMain: nie znaleziono roli recruit ${recruitRoleId} w guild ${member.guild.id}`);
+        logger.warn(`addMain: nie znaleziono roli recruit ${recruitRoleId} w ds_main!`);
         return;
     }
 
     await member.roles.add(role);
-    logger.info(`addMain: nadano rolę recruit ${role.name} (${role.id}) dla ${member.user.tag} w guild ${member.guild.id}`);
+    logger.info(`addMain: nadano rolę recruit ${role.name} (${role.id}) dla ${member.user.tag} w ds_main!`);
     // Synchronizacja uzytkownika z bazą danych
     await syncMember(member);
 
@@ -45,8 +46,9 @@ export async function addMain(member: GuildMember) {
     if (!welcomeChannelId) {
         return;
     } else {
-        const channel = member.guild.channels.cache.get(welcomeChannelId) ?? await member.guild.channels.fetch(welcomeChannelId).catch(() => null);
-        if (!channel || !channel.isTextBased()) {
+        const channel = await getChannelFromMember(member, welcomeChannelId);
+        if (!channel || !channel.isTextBased() || channel.isDMBased()) {
+            logger.warn(`addMain: nie znaleziono kanału powitalnego ${welcomeChannelId} w ds_main.`);
             return;
         }
         sendEmbed(channel, mainWelcomeEmbed(member));
@@ -55,30 +57,20 @@ export async function addMain(member: GuildMember) {
     // Usunięcie użytkownika z serwera rekrutacyjnego
     const recruitmentGuildId = getServerId('recruitment');
     if (!recruitmentGuildId) {
+        logger.warn(`addMain: brak ID serwera rekrutacyjnego!`);
         return;
     }
-    const recruitmentGuild = member.client.guilds.cache.get(recruitmentGuildId) ?? await member.client.guilds.fetch(recruitmentGuildId).catch(() => null);
+
+    const recruitmentGuild = await getGuildFromMember(member, recruitmentGuildId);
 
     if (recruitmentGuild) {
-        const recruitmentMember = recruitmentGuild.members.cache.get(member.id) ?? await recruitmentGuild.members.fetch(member.id).catch(() => null);
+        const recruitmentMember = await getMemberFromGuild(recruitmentGuild, member.id);
         if (recruitmentMember) {
-            recruitmentMember.kick('Przeszedł rekrutację i dołączył do DS Main').catch(() => {});
-            logger.info(`addMain: usunięto ${member.user.tag} (${member.id}) z ds_recru po dołączeniu do ds_main`);
+            recruitmentMember.kick('Przeszedł rekrutację i dołączył do ds_main').catch(() => {});
+            logger.info(`addMain: usunięto ${member.user.tag} (${member.id}) z ds_recruitment po dołączeniu do ds_main`);
         }
     }
 
     // Synchronizacja uzytkownika z bazą danych
     await syncMember(member);
-
-
-    /*
-    ✅addMain
-    ✅      - trzeba sprawdzić czy osoba posiada w bazie danych rangę Rekrut 
-    ✅          - jeśli nie to wiadomość, że nie ta osoba nie przeszłą rekrutacji i należy przejsć na ten dc:
-    ✅      - następnie trzeba nadać rangi i po nadaniu tych rang usunąć tą osobę z ds_recru
-    ✅      - syncMember
-    ✅      - wiadomość na kanale, że osoba przeszła rekrutacje
-
-
-    */
 }

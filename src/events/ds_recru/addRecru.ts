@@ -5,6 +5,7 @@ import { syncMember } from '../../sync/syncMembers';
 import { recruWelcomeEmbed } from '../../utils/embeds';
 import { sendEmbed } from '../../utils/embedBuilder';
 import { getServerId } from '../../utils/membership';
+import { getChannelFromMember, getRoleFromMember } from '../../utils/discord';
 
 export async function addRecru(member: GuildMember) {
 
@@ -20,7 +21,7 @@ export async function addRecru(member: GuildMember) {
   }
 
   try {
-    const role = member.guild.roles.cache.get(candidateRoleId) ?? await member.guild.roles.fetch(candidateRoleId).catch(() => null);
+    const role = await getRoleFromMember(member, candidateRoleId);
     if (!role) {
       logger.warn(`addRecru: nie znaleziono roli candidate ${candidateRoleId} w guild ${member.guild.id}`);
       return;
@@ -38,8 +39,8 @@ export async function addRecru(member: GuildMember) {
     if (!welcomeChannelId) {
       return;
     } else {
-      const channel = member.guild.channels.cache.get(welcomeChannelId) ?? await member.guild.channels.fetch(welcomeChannelId).catch(() => null);
-      if (!channel || !channel.isTextBased()) {
+      const channel = await getChannelFromMember(member, welcomeChannelId);
+      if (!channel || !channel.isTextBased() || channel.isDMBased()) {
         return;
       }
       sendEmbed(channel, recruWelcomeEmbed(member));
