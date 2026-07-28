@@ -44,3 +44,24 @@ export function recruLeaveEmbed(member: GuildMember) {
     description: `Szkoda, że odszedłeś, ${member.user.username}. Mamy nadzieję, że jeszcze do nas wrócisz!`,
   });
 }
+
+export function recruDSmemberKickEmbed(member: GuildMember) {
+  return buildEmbed({
+    title: `UWAGA!`,
+    description: `Jesteś już członkiem gildii Dark Star, oraz nie posiadasz rangi Enlister bądź wyższej, zatem nie możesz dołączyć do serwera rekrutacyjnego.`,
+  });
+}
+
+// embedy wysyłane na DARK STAR EMBASSY
+
+export function embassyDSmemberKickEmbed(member: GuildMember) {
+  return buildEmbed({
+    title: `UWAGA!`,
+    description: `Jesteś już członkiem gildii Dark Star, oraz nie posiadasz rangi Herald bądź wyższej, zatem nie możesz dołączyć do serwera ambasady.`,
+  });
+}
+
+
+/**************************************
+ * LOGI NA KANAŁ W DS MAIN
+ **************************************/

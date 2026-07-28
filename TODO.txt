@@ -1,0 +1,84 @@
+*********************************************************
+* DARK STAR REKRUTACJA                                   
+*********************************************************
+✅addRecru
+✅    NIE-DS: 
+✅    - dodać wiadomość na kanale na ds_recru
+✅    - nada rangę Candidate
+❌    - log na kanał w main
+✅    ENLISTER, OFICER, LICHE, EMPEROR:
+✅    - jeżeli enlister+ wejdą na dc, otrzymują rangę Enlister na ds_recru
+❌    - log na kanał w main
+✅    INNY DARK STAROWICZ:
+✅    - jeżeli zwykły członek gildii będzie chciał dołączyć na ds_recru = kick z ds_recru
+❌    - log na kanał w main
+
+❌removeRecru
+❌    NIE-DS:
+❌    - wiadomość embed na kanale (jeżeli nie jest na ds_main)
+❌    - synchronizacja membera
+❌    - log na kanał w main
+❌    REKRUT
+❌    - wiadomość embed na kanale
+❌    - log na kanał w main
+❌    ENLISTER, OFICER, LICHE, EMPEROR:
+❌    - log na kanał w main
+
+
+*********************************************************
+* DARK STAR MARKET                                       
+*********************************************************
+✅addMarket
+✅    NIE-DS:
+✅    - wysłać wiadomość do użytkownika który nie ma wstępu na market, że nie jest członkiem dark star
+✅    - kick z serwera jeżeli nie jest członkiem dark star
+❌    - log na kanał w main
+✅    DARK STAROWICZ:
+✅    - nadać rangę
+❌    - log na kanał w main
+
+❌removeMarket
+❌    NIE-DS:
+❌    - log na kanał w main że usunięto intruza
+❌    DARK STAROWICZ
+❌    - tutaj wystarczy zrobic tylko syncMemeber
+❌    - log na kanał w main
+
+
+*********************************************************
+* DARK STAR AMBASADA  (będzie robione jako ostatni)      
+*********************************************************
+❌addEmbassy
+❌    - każda nowa osoba wchodząca na dc powinna dostawać swoją własną sekcje wraz z rangą ambasador
+❌          -UWAGA: niedotyczy to osób z rangą: Diplomat, Oficer, Liche, Emperor; zwykli gildiowicze nie powinni mieć tu wstępu
+    
+❌removeEmbassy
+❌    - tutaj wystarczy zrobic tylko syncMember
+
+
+*********************************************************
+* DARK STAR MAIN                                         
+*********************************************************
+
+✅addMain
+✅    NIE-DS:
+✅    - trzeba sprawdzić czy osoba posiada w bazie danych rangę Rekrut
+✅    - jeśli nie ma rangi Rekrut to kick + wiadomość
+❌    - log na kanał w main
+✅    REKRUT:
+✅    - dostaje rangę + usuwany jest z ds_recru
+✅    - wiadomość na kanale, że osoba przeszła rekrutacje
+✅    - syncMember
+❌    - log na kanał w main
+
+❌removeMain
+❌    NIE-DS:
+❌    - log na kanał w main że usunięto intruza
+❌    REKRUT:
+❌    - log na kanał w main że rekrut wyszedł
+❌    - syncMember
+❌    DARK STAROWICZ
+❌    - embed że osoba wyszła (musiał mieć rangę darkStar)
+❌    - usunąć tą osobe ZE WSZYSTKICH discordów w klastrze
+❌    - syncMember
+❌    - log na kanał w main
