@@ -33,8 +33,13 @@ async function seed() {
     // 3. Wstawiamy CommandConfig
     const commands = [
       { name: 'warn',    description: 'Nakłada warna',                                                  allowedRoles: [ 'officer', 'liche', 'emperor' ]},
+      { name: 'warn-multiple', description: 'Nakłada warna wielu użytkownikom',                         allowedRoles: [ 'officer', 'liche', 'emperor' ]},
+      { name: 'warn-remove', description: 'Usuwa wybranego warna użytkownika',                           allowedRoles: [ 'officer', 'liche', 'emperor' ]},
+      { name: 'warns-clear', description: 'Usuwa wszystkie warny użytkownika',                          allowedRoles: [ 'officer', 'liche', 'emperor' ]},
+      { name: 'warns-show', description: 'Wyświetla wszystkie warny użytkownika',                       allowedRoles: [ 'officer', 'liche', 'emperor' ]},
       { name: 'recruit', description: 'Akceptuje użytkownika po rekrutacji',                            allowedRoles: [ 'enlister', 'officer', 'liche', 'emperor' ]},
-      { name: 'promote', description: 'Promocja użytkownika po głosowym wprowadzeniu do Dark Star',     allowedRoles: [ 'enlister', 'officer', 'liche', 'emperor' ]}
+      { name: 'promote', description: 'Promocja użytkownika po głosowym wprowadzeniu do Dark Star',     allowedRoles: [ 'enlister', 'officer', 'liche', 'emperor' ]},
+      { name: 'command-management', description: 'Zarządza dostępem komend do ról i serwerów',          allowedRoles: [ 'emperor' ]}
     ];
     await CommandConfigModel.insertMany(commands);
     logger.info(`✅ Wstawiono ${commands.length} definicji komend.`);
@@ -43,7 +48,7 @@ async function seed() {
     // Uwaga: role oraz channels w GuildConfig są puste, zostaną uzupełnione w seedRanksId() oraz seedChannelsId()
     const guilds = [
       { guildId: env.GUILD_RECRUITMENT_ID, guildName: 'DS Recruitment',   enabledCommands: ['recruit'],         roles: new Map(), channels: new Map(), },
-      { guildId: env.GUILD_MAIN_ID, guildName: 'DS Main',                 enabledCommands: ['warn', 'promote'], roles: new Map(), channels: new Map(), },
+      { guildId: env.GUILD_MAIN_ID, guildName: 'DS Main',                 enabledCommands: ['warn', 'warn-multiple', 'warn-remove', 'warns-clear', 'warns-show', 'promote', 'command-management'], roles: new Map(), channels: new Map(), },
       { guildId: env.GUILD_EMBASSY_ID, guildName: 'DS Embassy',           enabledCommands: [],                  roles: new Map(), channels: new Map(), },
       { guildId: env.GUILD_MARKET_ID, guildName: 'DS Market',             enabledCommands: [],                  roles: new Map(), channels: new Map(), }
     ];

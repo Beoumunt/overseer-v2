@@ -17,7 +17,7 @@ export async function execute(
   try {
 
     if (member.guild.id === env.GUILD_RECRUITMENT_ID) {
-        await removeRecru(member); 
+        await removeRecru(member, client); 
     }
     
     

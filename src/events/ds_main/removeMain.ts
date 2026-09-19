@@ -7,6 +7,7 @@ import { sendEmbed } from '../../utils/embedBuilder';
 import { mainLeaveEmbed } from '../../utils/embeds';
 import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { getServerId } from '../../utils/membership';
+import { memberHasRole } from '../../utils/dbRoles';
 
 export async function removeMain(
 	member: GuildMember | PartialGuildMember,
@@ -21,11 +22,14 @@ export async function removeMain(
 	].filter((guildId): guildId is string => Boolean(guildId));
 
     const mainGuildId = getServerId('main')!;
-    const cfg = await GuildConfigModel.findOne({ guildId: mainGuildId }).lean();
-	const channel = await getChannelFromClient(client, mainGuildId, cfg!.channels!.welcome!);
-    
-	if (channel?.isTextBased() && !channel.isDMBased()) {
-		await sendEmbed(channel, mainLeaveEmbed(member));
+
+	if (await memberHasRole(member, ['darkStar'], 'all')) {
+		const cfg = await GuildConfigModel.findOne({ guildId: mainGuildId }).lean();
+		const channel = await getChannelFromClient(client, mainGuildId, cfg!.channels!.welcome!);
+
+		if (channel?.isTextBased() && !channel.isDMBased()) {
+			await sendEmbed(channel, mainLeaveEmbed(member));
+		}
 	}
 
 	for (const guildId of guildIds) {

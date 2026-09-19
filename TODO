@@ -4,9 +4,10 @@
 ✅addRecru
 ✅    - dodać wiadomość na kanale na ds_recru
 
-❌removeRecru
-❌    - dodać wiadomośc na kanale na ds_rectu
-❌        UWAGA: w przypadku awansu z reckru -> main ta wiadomość nie powinna być wyświetlana
+✅removeRecru
+✅    - dodać wiadomość na kanale na ds_recru
+✅        - wiadomość nie jest wysyłana przy awansie z recruitment -> main
+✅        - synchronizacja wykonywana jest niezależnie od wysłania wiadomości
 
 
 *********************************************************
@@ -17,9 +18,9 @@
 ✅          - kick z serwera jeżeli nie ma jest członkiem dark star
 ✅          - nadać rangę jeżeli nim jest
 
-❌removeMarket
-❌    - tutaj wystarczy zrobic tylko syncMemeber
-❌          - PROBLEM: jak odróżnic osobę darkStar która wyszła od osoby która nielegalnie próbowała wejść na discord?
+✅removeMarket
+✅    - tutaj wystarczy zrobić tylko syncMember
+❌          - PROBLEM: jak odróżnić osobę darkStar która wyszła od osoby która nielegalnie próbowała wejść na discord?
 
 
 *********************************************************
@@ -44,9 +45,73 @@
 ✅      - syncMember
 ✅      - wiadomość na kanale, że osoba przeszła rekrutacje
 
-❌removeMain
-❌      - dodać na kanale że osoba wyszła
+✅removeMain
+✅      - dodać na kanale że osoba wyszła, tylko jeśli osoba ma w bazie rangę darkStar
 ❌          - PROBLEM: jak odróżnic osobę darkStar która wyszła od osoby która nielegalnie próbowała wejść na discord?
-❌      - usunąć tą osobe ZE WSZYSTKICH discordów w klastrze
-❌      - syncMember
-    
+✅      - usunąć tą osobe ZE WSZYSTKICH pozostałych discordów w klastrze
+✅      - syncMember
+
+
+*********************************************************
+* FEATURES - NIE WYMAGANE DO STARTU APLIKACJI NA PRODUKCJI                                         
+*********************************************************
+
+❌/create-member-counter
+
+❌/update-member-counters
+
+❌/clear-reactions
+
+-- niewymagane do startu produkcyjnego:
+
+❌wysyłanie nowych artykułów ze strony
+
+❌logowanie do kanału
+
+❌logowanie do pliku
+
+❌reminder note channel (+komenda)
+
+❌własny moduł wyboru klasy dla głównej gry
+
+
+*********************************************************
+* KOMENDY                                                
+*********************************************************
+✅    - rejestracja komend porównuje istniejące komendy Discorda z konfiguracją
+✅    - aktualizacja komend nie blokuje logowania bota
+
+✅/command-management
+        
+✅/embed-test
+        - wysyłą embedy na kanał w celu prezentacji ich wyglądu
+
+✅/ping
+
+✅/warn
+
+✅/warn-multiple
+
+✅/warn-remove
+
+✅/warns-clear
+
+✅/warns-show
+
+❌/ban
+
+❌/hail
+
+✅/recruit
+✅      - rejestrowana tylko na gildiach z enabledCommands
+✅      - dostępna tylko dla ról z CommandConfig.allowedRoles
+✅      - nadaje rangę recruit i usuwa candidate
+✅      - synchronizuje użytkownika z bazą
+
+✅/promote
+✅      - rejestrowana tylko na gildiach z enabledCommands
+✅      - dostępna tylko dla ról z CommandConfig.allowedRoles
+✅      - wymaga rangi recruit w bazie
+✅      - nadaje rangę darkStar i usuwa recruit
+✅      - synchronizuje użytkownika z bazą
+❌     - wysyła publiczny promoteEmbed po udanej promocji a powinien wysyłać zwykłą wiadomość
