@@ -1,4 +1,5 @@
-import { Client, GuildMember } from 'discord.js';
+import { Client } from 'discord.js';
+import type { GuildMember, PartialGuildMember } from 'discord.js';
 import { GuildConfigModel } from '../db/models/GuildConfig';
 import { getServerId } from '../utils/membership';
 import { upsertMember, type MembershipsIncoming } from '../services/memberService';
@@ -9,7 +10,7 @@ import { logger } from '../lib/logger';
  * (iteruje przez GuildConfig i fetchnie stanu w każdym guild) i zwraca
  * payload gotowy do przekazania do memberService.upsertMember.
  */
-export async function buildSyncPayloadForMember(member: GuildMember) {
+export async function buildSyncPayloadForMember(member: GuildMember | PartialGuildMember) {
   const client = member.client;
   const guildConfigs = await GuildConfigModel.find().lean();
   const membershipsIncoming: MembershipsIncoming = {};
@@ -79,7 +80,7 @@ export async function buildSyncPayloadForMember(member: GuildMember) {
   return { member, memberships: membershipsIncoming, mainRoles: mainRolesArray };
 }
 
-export async function syncMember(member: GuildMember) {
+export async function syncMember(member: GuildMember | PartialGuildMember) {
   const payload = await buildSyncPayloadForMember(member);
   return upsertMember(payload);
 }

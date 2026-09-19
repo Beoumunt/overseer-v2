@@ -1,4 +1,5 @@
-import { Events, GuildMember } from 'discord.js';
+import { Events } from 'discord.js';
+import type { Client, GuildMember } from 'discord.js';
 import { addRecru } from './ds_recru/addRecru';
 import { addMarket } from './ds_market/addMarket';
 import { addMain } from './ds_main/addMain';
@@ -8,16 +9,16 @@ import { env } from '../lib/env'; // Potrzebne do sprawdzenia ID serwera
 
 export const name = Events.GuildMemberAdd;
 
-export async function execute(member: GuildMember) {
+export async function execute(member: GuildMember, client: Client) {
   try {
     // Sprawdzamy, czy dołączenie nastąpiło na serwerze rekrutacyjnym
     if (member.guild.id === env.GUILD_RECRUITMENT_ID) {
-        await addRecru(member);
+        await addRecru(member, client);
     }
     
     
     if (member.guild.id === env.GUILD_MAIN_ID) { 
-        await addMain(member); 
+        await addMain(member, client); 
     }
     /*
     if (member.guild.id === env.GUILD_EMBASSY_ID) { 
@@ -26,7 +27,7 @@ export async function execute(member: GuildMember) {
     */
 
     if (member.guild.id === env.GUILD_MARKET_ID) { 
-        await addMarket(member); 
+        await addMarket(member, client); 
     }
     
   } catch (error) {

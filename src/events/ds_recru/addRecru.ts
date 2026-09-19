@@ -1,14 +1,14 @@
-import { GuildMember } from 'discord.js';
+import { Client, GuildMember } from 'discord.js';
 import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
 import { recruWelcomeEmbed, recruDSmemberKickEmbed } from '../../utils/embeds';
 import { sendEmbed } from '../../utils/embedBuilder';
 import { getServerId } from '../../utils/membership';
-import { getChannelFromMember, getRoleFromMember } from '../../utils/discord';
+import { getChannelFromClient, getRoleFromClient } from '../../utils/discord';
 import { memberHasRole } from '../../utils/dbRoles';
 
-export async function addRecru(member: GuildMember) {
+export async function addRecru(member: GuildMember, client: Client) {
 
   if (member.user.bot) return;
 
@@ -28,7 +28,7 @@ export async function addRecru(member: GuildMember) {
   // jeżeli osoba jest w kadrze zarządczej to może wejść na serwer i otrzymuje rolę Enlister na ds_recru
   // jeżeli jest zwykłym członkiem to nie może wejść na serwer
   if(await memberHasRole(member, ['enlister', 'officer', 'liche', 'emperor'], 'any')) {
-    const role = await getRoleFromMember(member, enlisterRoleId);
+    const role = await getRoleFromClient(client, recruGuildId, enlisterRoleId);
 
     if (!role) {
       logger.warn(`addRecru: nie znaleziono roli enlister ${enlisterRoleId} w ds_recru`);
@@ -45,7 +45,7 @@ export async function addRecru(member: GuildMember) {
   }
 
   try {
-    const role = await getRoleFromMember(member, candidateRoleId);
+    const role = await getRoleFromClient(client, recruGuildId, candidateRoleId);
     if (!role) {
       logger.warn(`addRecru: nie znaleziono roli candidate ${candidateRoleId} w ds_recru`);
       return;
@@ -63,7 +63,7 @@ export async function addRecru(member: GuildMember) {
     if (!welcomeChannelId) {
       return;
     } else {
-      const channel = await getChannelFromMember(member, welcomeChannelId);
+      const channel = await getChannelFromClient(client, recruGuildId, welcomeChannelId);
       if (!channel || !channel.isTextBased() || channel.isDMBased()) {
         return;
       }

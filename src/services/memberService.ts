@@ -1,4 +1,4 @@
-import { GuildMember } from 'discord.js';
+import type { GuildMember, PartialGuildMember } from 'discord.js';
 import { MemberModel } from '../db/models/Member';
 import { logger } from '../lib/logger';
 
@@ -12,7 +12,7 @@ export type MembershipState = {
 export type MembershipsIncoming = Record<string, MembershipState>;
 
 export type SyncMemberPayload = {
-  member: GuildMember;
+  member: GuildMember | PartialGuildMember;
   memberships: MembershipsIncoming;
   mainRoles: string[];
 };

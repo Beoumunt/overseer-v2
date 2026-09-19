@@ -1,5 +1,5 @@
 import { buildEmbed } from './embedBuilder';
-import type { GuildMember } from 'discord.js';
+import type { GuildMember, PartialGuildMember } from 'discord.js';
 
 
 // embedy wysyłane na DARK STAR MAIN
@@ -15,6 +15,13 @@ export function mainWelcomeEmbed(member: GuildMember) {
   return buildEmbed({
     title: `${member.user.username} przeszedł rekrutację!`,
     description: `Cieszymy się, że do nas dołączyłeś, ${member.user.username}!`,
+  });
+}
+
+export function mainLeaveEmbed(member: GuildMember | PartialGuildMember) {
+  return buildEmbed({
+    title: `${member.user.username} nas opuścił!`,
+    description: `${member.user.username} właśnie opuścił Dark Star`,
   });
 }
 

@@ -1,32 +1,45 @@
-import { Guild, GuildMember, Role, type TextBasedChannel } from 'discord.js';
+import { Guild, Role, type Client, type GuildMember, type PartialGuildMember, type TextBasedChannel } from 'discord.js';
 
+export async function getRoleFromClient(
+    client: Client,
+    guildId?: string | null,
+    roleId?: string | null
+): Promise<Role | null> {
+    if (!client || !guildId || !roleId) return null;
 
-export async function getRoleFromMember(member: GuildMember, roleId?: string | null): Promise<Role | null> {
-    if (!member || !roleId) return null;
-    const guild = member.guild;
+    const guild = client.guilds.cache.get(guildId)
+        ?? await client.guilds.fetch(guildId).catch(() => null);
+    if (!guild) return null;
 
-    const cached = member.guild.roles.cache.get(roleId);
+    const cached = guild.roles.cache.get(roleId);
     if (cached) return cached;
 
-    return await member.guild.roles.fetch(roleId).catch(() => null);
+    return await guild.roles.fetch(roleId).catch(() => null);
 }
 
-export async function getChannelFromMember(member: GuildMember, channelId?: string | null): Promise<TextBasedChannel | null> {
-    if (!member || !channelId) return null;
-    const guild = member.guild;
+export async function getChannelFromClient(
+    client: Client,
+    guildId?: string | null,
+    channelId?: string | null
+): Promise<TextBasedChannel | null> {
+    if (!client || !guildId || !channelId) return null;
+
+    const guild = client.guilds.cache.get(guildId)
+        ?? await client.guilds.fetch(guildId).catch(() => null);
+    if (!guild) return null;
 
     // najpierw cache, potem fetch, bez wyrzucania błędu
     const cachedChannel = guild.channels.cache.get(channelId);
 
     if (cachedChannel && cachedChannel.isTextBased()) return cachedChannel as TextBasedChannel;
 
-    const fetchedChannel = await member.guild.channels.fetch(channelId).catch(() => null);
+    const fetchedChannel = await guild.channels.fetch(channelId).catch(() => null);
     if (!fetchedChannel) return null;
 
     return fetchedChannel.isTextBased() ? (fetchedChannel as TextBasedChannel) : null;
 }
 
-export async function getGuildFromMember(member: GuildMember, guildId?: string | null): Promise<Guild | null> {
+export async function getGuildFromMember(member: GuildMember | PartialGuildMember, guildId?: string | null): Promise<Guild | null> {
     if (!member || !guildId) return null;
 
     const cached = member.client.guilds.cache.get(guildId);

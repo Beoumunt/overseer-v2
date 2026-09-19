@@ -1,4 +1,4 @@
-import { GuildMember } from 'discord.js';
+import { Client, GuildMember } from 'discord.js';
 import { mainIntruderEmbed, mainWelcomeEmbed } from '../../utils/embeds';
 import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { logger } from '../../lib/logger';
@@ -6,9 +6,9 @@ import { syncMember } from '../../sync/syncMembers';
 import { memberHasRole } from '../../utils/dbRoles';
 import { getServerId } from '../../utils/membership';
 import { sendEmbed } from '../../utils/embedBuilder';
-import { getChannelFromMember, getGuildFromMember, getMemberFromGuild, getRoleFromMember } from '../../utils/discord';
+import { getChannelFromClient, getGuildFromMember, getMemberFromGuild, getRoleFromClient } from '../../utils/discord';
 
-export async function addMain(member: GuildMember) {
+export async function addMain(member: GuildMember, client: Client) {
     if (member.user.bot) return;
 
 
@@ -29,7 +29,7 @@ export async function addMain(member: GuildMember) {
     }
 
     // Pobieramy obiekt roli z cache lub fetchujemy go, jeśli nie jest dostępny w cache
-    const role = await getRoleFromMember(member, recruitRoleId);
+    const role = await getRoleFromClient(client, mainGuildId, recruitRoleId);
     if (!role) {
         logger.warn(`addMain: nie znaleziono roli recruit ${recruitRoleId} w ds_main!`);
         return;
@@ -46,7 +46,7 @@ export async function addMain(member: GuildMember) {
     if (!welcomeChannelId) {
         return;
     } else {
-        const channel = await getChannelFromMember(member, welcomeChannelId);
+        const channel = await getChannelFromClient(client, mainGuildId, welcomeChannelId);
         if (!channel || !channel.isTextBased() || channel.isDMBased()) {
             logger.warn(`addMain: nie znaleziono kanału powitalnego ${welcomeChannelId} w ds_main.`);
             return;
