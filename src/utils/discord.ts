@@ -55,3 +55,25 @@ export async function getMemberFromGuild(guild: Guild, memberId: string): Promis
     if (cached) return cached;
     return await guild.members.fetch(memberId).catch(() => null);
 }
+
+export async function fetchGuildMembersWithRetry(
+    guild: Guild,
+    maxAttempts = 3
+) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+            return await guild.members.fetch();
+        } catch (error) {
+            if (attempt === maxAttempts) throw error;
+
+            const retryMatch = String(error).match(/Retry after ([\d.]+) seconds/i);
+            const retryAfterMs = retryMatch
+                ? Math.ceil(Number(retryMatch[1]) * 1000) + 250
+                : attempt * 3000;
+
+            await new Promise(resolve => setTimeout(resolve, retryAfterMs));
+        }
+    }
+
+    throw new Error(`Nie udało się pobrać członków gildii ${guild.id}.`);
+}

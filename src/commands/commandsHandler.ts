@@ -1,36 +1,12 @@
 import { MessageFlags, type Client, type Interaction } from 'discord.js';
 import { canUseCommand } from './commandAccess';
-import * as promoteCommand from './admin/promote';
-import * as recruitCommand from './admin/recruit';
-import * as warnCommand from './admin/warn';
-import * as warnMultipleCommand from './admin/warn-multiple';
-import * as warnRemoveCommand from './admin/warn-remove';
-import * as warnsClearCommand from './admin/warns-clear';
-import * as warnsShowCommand from './admin/warns-show';
-import * as commandManagement from './general/command-management';
-import * as pingCommand from './general/ping';
-import * as embedTestCommand from './misc/embed-test';
-import * as testCommand from './misc/testCommand';
-
-const commands = new Map([
-  [recruitCommand.name, recruitCommand],
-  [promoteCommand.name, promoteCommand],
-  [warnCommand.name, warnCommand],
-  [warnMultipleCommand.name, warnMultipleCommand],
-  [warnRemoveCommand.name, warnRemoveCommand],
-  [warnsClearCommand.name, warnsClearCommand],
-  [warnsShowCommand.name, warnsShowCommand],
-  [commandManagement.name, commandManagement],
-  [pingCommand.name, pingCommand],
-  [embedTestCommand.name, embedTestCommand],
-  [testCommand.name, testCommand]
-]);
+import { commandMap } from './commandRegistry';
 
 export function registerCommandEvents(client: Client) {
   // Rejestrujemy jeden punkt wejścia dla wszystkich slash commandów.
   client.on('interactionCreate', async (interaction: Interaction) => {
     if (interaction.isAutocomplete()) {
-      const command = commands.get(interaction.commandName);
+      const command = commandMap.get(interaction.commandName);
       const autocomplete = command && 'autocomplete' in command
         ? command.autocomplete
         : undefined;
@@ -49,7 +25,7 @@ export function registerCommandEvents(client: Client) {
     if (!interaction.isChatInputCommand()) return;
 
     // Wybieramy konkretną implementację komendy po nazwie.
-    const command = commands.get(interaction.commandName);
+    const command = commandMap.get(interaction.commandName);
     if (!command) return;
 
     try {

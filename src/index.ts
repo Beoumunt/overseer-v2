@@ -7,6 +7,7 @@ import { registerEvents } from './events/eventsHandler';
 import { registerCommandEvents } from './commands/commandsHandler';
 import { registerGuildCommands } from './commands/registerCommands';
 import { syncCommandConfigs } from './commands/syncCommandConfigs';
+import { startMemberCounterScheduler } from './services/memberCounters/memberCounterScheduler';
 
 const client = new Client({
   intents: [
@@ -33,6 +34,7 @@ async function bootstrap() {
     });
 
     await syncAllMembersOnStartup(client);
+    startMemberCounterScheduler(client);
   });
 
   // 3. Zarejestruj eventy

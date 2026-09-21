@@ -1,0 +1,19 @@
+MemberCounter
+
+Opis: konfiguracja kanału z licznikiem członków posiadających określoną rolę.
+
+Pola:
+- guildId: String, wymagane, ID serwera Discord
+- roleId: String, wymagane, ID liczonej roli Discord
+- roleName: String, wymagane, nazwa roli zapisana przy utworzeniu licznika
+- channelId: String, wymagane, ID kanału tekstowego licznika
+- createdBy: String, wymagane, ID użytkownika tworzącego licznik
+- isActive: Boolean, domyślnie true
+- lastCount: Number lub null, ostatnia zapisana liczba członków z rangą
+- createdAt: Date, automatyczne
+- updatedAt: Date, automatyczne
+
+Indeks unikalny:
+- guildId + roleId, aby jedna gildia miała najwyżej jeden licznik dla danej roli
+
+Aktualna liczba członków nie jest przechowywana w bazie. Będzie wyliczana podczas ręcznej lub automatycznej aktualizacji kanału.

@@ -20,7 +20,6 @@
 
 ✅removeMarket
 ✅    - tutaj wystarczy zrobić tylko syncMember
-❌          - PROBLEM: jak odróżnić osobę darkStar która wyszła od osoby która nielegalnie próbowała wejść na discord?
 
 
 *********************************************************
@@ -47,7 +46,7 @@
 
 ✅removeMain
 ✅      - dodać na kanale że osoba wyszła, tylko jeśli osoba ma w bazie rangę darkStar
-❌          - PROBLEM: jak odróżnic osobę darkStar która wyszła od osoby która nielegalnie próbowała wejść na discord?
+✅          - PROBLEM: jak odróżnic osobę darkStar która wyszła od osoby która nielegalnie próbowała wejść na discord?
 ✅      - usunąć tą osobe ZE WSZYSTKICH pozostałych discordów w klastrze
 ✅      - syncMember
 
@@ -56,9 +55,18 @@
 * FEATURES - NIE WYMAGANE DO STARTU APLIKACJI NA PRODUKCJI                                         
 *********************************************************
 
-❌/create-member-counter
+✅/create-member-counter
+✅    - wybór rangi przez autocomplete z bieżącego serwera
+✅    - utworzenie kanału 📊<nazwa-rangi>-<liczba>
+✅    - zapis konfiguracji kanału w kolekcji MemberCounter
 
-❌/update-member-counters
+✅/update-member-counters
+✅    - ręcznie aktualizuje wszystkie zapisane liczniki niezależnie od gildii
+✅    - oznacza usunięte kanały lub role jako nieaktywne
+✅    - wspólna logika z aktualizacją automatyczną
+✅    - kolejka aktualizacji ograniczająca równoległe żądania Gateway
+✅    - debounce zmian członków i ról
+✅    - pełna synchronizacja naprawcza co 30 minut
 
 ❌/clear-reactions
 
@@ -98,9 +106,9 @@
 
 ✅/warns-show
 
-❌/ban
+✅/ban
 
-❌/hail
+✅/hail
 
 ✅/recruit
 ✅      - rejestrowana tylko na gildiach z enabledCommands
@@ -114,4 +122,4 @@
 ✅      - wymaga rangi recruit w bazie
 ✅      - nadaje rangę darkStar i usuwa recruit
 ✅      - synchronizuje użytkownika z bazą
-❌     - wysyła publiczny promoteEmbed po udanej promocji a powinien wysyłać zwykłą wiadomość
+✅      - wysyła publiczny promoteEmbed po udanej promocji a powinien wysyłać zwykłą wiadomość

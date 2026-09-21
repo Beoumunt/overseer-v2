@@ -3,7 +3,7 @@ import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { MemberModel } from '../../db/models/Member';
 import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
-import { recruLeaveEmbed } from '../../utils/embeds';
+import { recruLeaveEmbed } from '../../utils/embedConfig/embeds';
 import { getChannelFromClient } from '../../utils/discord';
 import { getServerId } from '../../utils/membership';
 

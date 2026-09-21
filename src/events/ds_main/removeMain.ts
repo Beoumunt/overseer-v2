@@ -3,8 +3,7 @@ import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
 import { env } from '../../lib/env';
 import { getChannelFromClient, getMemberFromGuild } from '../../utils/discord';
-import { sendEmbed } from '../../utils/embedBuilder';
-import { mainLeaveEmbed } from '../../utils/embeds';
+import { mainLeaveEmbed } from '../../utils/embedConfig/embeds';
 import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { getServerId } from '../../utils/membership';
 import { memberHasRole } from '../../utils/dbRoles';
@@ -28,7 +27,7 @@ export async function removeMain(
 		const channel = await getChannelFromClient(client, mainGuildId, cfg!.channels!.welcome!);
 
 		if (channel?.isTextBased() && !channel.isDMBased()) {
-			await sendEmbed(channel, mainLeaveEmbed(member));
+			await channel.send({ embeds: [mainLeaveEmbed(member)] });
 		}
 	}
 

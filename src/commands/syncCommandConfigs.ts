@@ -1,5 +1,5 @@
 import { CommandConfigModel } from '../db/models/CommandConfig';
-import { commandDefinitions } from './commandDefinitions';
+import { commandDefinitions } from './commandRegistry';
 
 export async function syncCommandConfigs() {
   for (const [name, definition] of commandDefinitions) {

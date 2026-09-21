@@ -7,6 +7,13 @@ import { RoleDefinitionModel } from './models/RoleDefinition';
 import { GuildConfigModel } from './models/GuildConfig';
 import { CommandConfigModel } from './models/CommandConfig';
 
+/** Usuwa opcjonalne role i kanały, których ID nie podano w .env. */
+function configuredIds(values: Record<string, string | undefined>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(values).filter(([, value]) => Boolean(value))
+  ) as Record<string, string>;
+}
+
 async function seed() {
   try {
     logger.info('🌱 Rozpoczynam proces seedowania bazy danych...');
@@ -39,6 +46,10 @@ async function seed() {
       { name: 'warns-show', description: 'Wyświetla wszystkie warny użytkownika',                       allowedRoles: [ 'officer', 'liche', 'emperor' ]},
       { name: 'recruit', description: 'Akceptuje użytkownika po rekrutacji',                            allowedRoles: [ 'enlister', 'officer', 'liche', 'emperor' ]},
       { name: 'promote', description: 'Promocja użytkownika po głosowym wprowadzeniu do Dark Star',     allowedRoles: [ 'enlister', 'officer', 'liche', 'emperor' ]},
+      { name: 'ban', description: 'Banuje użytkownika na wszystkich serwerach klastra Dark Star',       allowedRoles: [ 'liche', 'emperor' ]},
+      { name: 'create-member-counter', description: 'Tworzy kanał liczący członków wybranej rangi',        allowedRoles: [ 'emperor' ]},
+      { name: 'update-member-counters', description: 'Aktualizuje wszystkie kanały liczników w klastrze',  allowedRoles: [ 'emperor' ]},
+      { name: 'hail-dark-star', description: 'Wysyła powitanie Dark Star na bieżący kanał',             allowedRoles: [ 'emperor' ]},
       { name: 'command-management', description: 'Zarządza dostępem komend do ról i serwerów',          allowedRoles: [ 'emperor' ]}
     ];
     await CommandConfigModel.insertMany(commands);
@@ -48,7 +59,7 @@ async function seed() {
     // Uwaga: role oraz channels w GuildConfig są puste, zostaną uzupełnione w seedRanksId() oraz seedChannelsId()
     const guilds = [
       { guildId: env.GUILD_RECRUITMENT_ID, guildName: 'DS Recruitment',   enabledCommands: ['recruit'],         roles: new Map(), channels: new Map(), },
-      { guildId: env.GUILD_MAIN_ID, guildName: 'DS Main',                 enabledCommands: ['warn', 'warn-multiple', 'warn-remove', 'warns-clear', 'warns-show', 'promote', 'command-management'], roles: new Map(), channels: new Map(), },
+      { guildId: env.GUILD_MAIN_ID, guildName: 'DS Main',                 enabledCommands: ['warn', 'warn-multiple', 'warn-remove', 'warns-clear', 'warns-show', 'promote', 'ban', 'create-member-counter', 'update-member-counters', 'hail-dark-star', 'command-management'], roles: new Map(), channels: new Map(), },
       { guildId: env.GUILD_EMBASSY_ID, guildName: 'DS Embassy',           enabledCommands: [],                  roles: new Map(), channels: new Map(), },
       { guildId: env.GUILD_MARKET_ID, guildName: 'DS Market',             enabledCommands: [],                  roles: new Map(), channels: new Map(), }
     ];
@@ -64,54 +75,30 @@ async function seed() {
 
 export async function seedRanksIds(): Promise<number> {
   const GUILD_ROLE_MAP: Record<string, Record<string, string>> = {
-    [String(env.GUILD_MAIN_ID)]: { // main
-      candidate:  '',
-      recruit:    '1289877668539400198',
-      guest:      '1289877668539400199',
-      darkStar:   '1289877668539400201',
-      enlister:   '1289877668548051011',
-      diplomat:   '1289877668548051013',
-      ambassador: '1289877668539400200',
-      officer:    '1289877668560506903',
-      liche:      '1289877668560506904',
-      emperor:    '1289877668560506905'
-    },
-    [String(env.GUILD_RECRUITMENT_ID)]: { // recru
-      candidate:  '1530508653537263686',
-      recruit:    '1530508688828403762',
-      guest:      '',
-      darkStar:   '',
-      enlister:   '1530508517629235250',
-      diplomat:   '',
-      ambassador: '',
-      officer:    '',
-      liche:      '',
-      emperor:    ''
-    },
-    [String(env.GUILD_MARKET_ID)]: { // market
-      candidate:  '',
-      recruit:    '',
-      guest:      '',
-      darkStar:   '',
-      enlister:   '',
-      diplomat:   '',
-      ambassador: '',
-      officer:    '',
-      liche:      '',
-      emperor:    ''
-    },
-    [String(env.GUILD_EMBASSY_ID)]: { // embassy
-      candidate:  '',
-      recruit:    '',
-      guest:      '',
-      darkStar:   '',
-      enlister:   '',
-      diplomat:   '',
-      ambassador: '',
-      officer:    '',
-      liche:      '',
-      emperor:    ''
-    },
+    [env.GUILD_MAIN_ID]: configuredIds({
+      candidate: env.GUILD_MAIN_ROLE_CANDIDATE_ID,
+      recruit: env.GUILD_MAIN_ROLE_RECRUIT_ID,
+      guest: env.GUILD_MAIN_ROLE_GUEST_ID,
+      darkStar: env.GUILD_MAIN_ROLE_DARK_STAR_ID,
+      enlister: env.GUILD_MAIN_ROLE_ENLISTER_ID,
+      diplomat: env.GUILD_MAIN_ROLE_DIPLOMAT_ID,
+      ambassador: env.GUILD_MAIN_ROLE_AMBASSADOR_ID,
+      officer: env.GUILD_MAIN_ROLE_OFFICER_ID,
+      liche: env.GUILD_MAIN_ROLE_LICHE_ID,
+      emperor: env.GUILD_MAIN_ROLE_EMPEROR_ID
+    }),
+    [env.GUILD_RECRUITMENT_ID]: configuredIds({
+      candidate: env.GUILD_RECRUITMENT_ROLE_CANDIDATE_ID,
+      recruit: env.GUILD_RECRUITMENT_ROLE_RECRUIT_ID,
+      enlister: env.GUILD_RECRUITMENT_ROLE_ENLISTER_ID
+    }),
+    [env.GUILD_MARKET_ID]: configuredIds({
+      darkStar: env.GUILD_MARKET_ROLE_DARK_STAR_ID
+    }),
+    [env.GUILD_EMBASSY_ID]: configuredIds({
+      diplomat: env.GUILD_EMBASSY_ROLE_DIPLOMAT_ID,
+      ambassador: env.GUILD_EMBASSY_ROLE_AMBASSADOR_ID
+    })
   };
 
   const entries = Object.entries(GUILD_ROLE_MAP);
@@ -149,21 +136,18 @@ export async function seedRanksIds(): Promise<number> {
 
 export async function seedChannelsId(): Promise<number> {
   const GUILD_CHANNEL_MAP: Record<string, Record<string, string>> = {
-    [String(env.GUILD_MAIN_ID)]: {
-      welcome:        '1289877668812296264',
-      note:           '1289877668812296267',
-      news:           '1289877668812296268'
-    },
-    [String(env.GUILD_RECRUITMENT_ID)]: {
-      welcome:        '1529732575684329554'
-    },
-    [String(env.GUILD_MARKET_ID)]: {
-      announcements:  '1529784832115216516'
-    },
-    [String(env.GUILD_EMBASSY_ID)]: {
-      welcome:        '1529732829330804779',
-      botRaport:      '1530650084075765831'
-    }
+    [env.GUILD_MAIN_ID]: configuredIds({
+      welcome: env.GUILD_MAIN_CHANNEL_WELCOME_ID,
+      bans: env.GUILD_MAIN_CHANNEL_BANS_ID,
+      note: env.GUILD_MAIN_CHANNEL_NOTE_ID,
+      news: env.GUILD_MAIN_CHANNEL_NEWS_ID
+    }),
+    [env.GUILD_RECRUITMENT_ID]: configuredIds({
+      welcome: env.GUILD_RECRUITMENT_CHANNEL_WELCOME_ID
+    }),
+    [env.GUILD_EMBASSY_ID]: configuredIds({
+      welcome: env.GUILD_EMBASSY_CHANNEL_WELCOME_ID
+    })
   };
 
   const entries = Object.entries(GUILD_CHANNEL_MAP);

@@ -1,11 +1,10 @@
 import { Client, GuildMember } from 'discord.js';
-import { mainIntruderEmbed, mainWelcomeEmbed } from '../../utils/embeds';
+import { mainIntruderEmbed, mainWelcomeEmbed } from '../../utils/embedConfig/embeds';
 import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
 import { memberHasRole } from '../../utils/dbRoles';
 import { getServerId } from '../../utils/membership';
-import { sendEmbed } from '../../utils/embedBuilder';
 import { getChannelFromClient, getGuildFromMember, getMemberFromGuild, getRoleFromClient } from '../../utils/discord';
 
 export async function addMain(member: GuildMember, client: Client) {
@@ -13,7 +12,7 @@ export async function addMain(member: GuildMember, client: Client) {
 
 
     if (!await memberHasRole(member, ['recruit'], 'all')) {
-        sendEmbed(member, mainIntruderEmbed(member));
+        member.send({ embeds: [mainIntruderEmbed(member)] });
         member.kick('Nie przeszedł rekrutacji, nie może przebywać na tym discordzie').catch(() => {});
         logger.info(`addMain: wyrzucono ${member.user.tag} (${member.id}) z ds_main, ponieważ nie posiada rangi recruit w bazie danych`);
         return;
@@ -51,7 +50,7 @@ export async function addMain(member: GuildMember, client: Client) {
             logger.warn(`addMain: nie znaleziono kanału powitalnego ${welcomeChannelId} w ds_main.`);
             return;
         }
-        sendEmbed(channel, mainWelcomeEmbed(member));
+        channel.send({ embeds: [mainWelcomeEmbed(member)] });
     }
 
     // Usunięcie użytkownika z serwera rekrutacyjnego

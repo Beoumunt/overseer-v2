@@ -1,11 +1,10 @@
 import { Client, GuildMember } from 'discord.js';
-import { marketIntruderEmbed } from '../../utils/embeds';
+import { marketIntruderEmbed } from '../../utils/embedConfig/embeds';
 import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
 import { memberHasRole } from '../../utils/dbRoles';
 import { getServerId } from '../../utils/membership';
-import { sendEmbed } from '../../utils/embedBuilder';
 import { getRoleFromClient } from '../../utils/discord';
 /*
     1. Sprawdzamy czy uzytkownik jest w ds_main i czy ma dangę darkStar
@@ -19,7 +18,7 @@ export async function addMarket(member: GuildMember, client: Client) {
   
   // Jeżeli nie jest członkiem Dark Star: wysłanie wiadomości -> kick -> log
   if (!await memberHasRole(member, ['darkStar'], 'all')) {
-    sendEmbed(member, marketIntruderEmbed(member));
+    member.send({ embeds: [marketIntruderEmbed(member)] });
     member.kick('Nie jest członkiem Dark Star, nie może przebywać na tym discordzie').catch(() => {});
     logger.info(`addMarket: wyrzucono ${member.user.tag} (${member.id}) z marketu, ponieważ nie jest członkiem Dark Star`);
     return;

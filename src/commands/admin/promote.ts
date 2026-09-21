@@ -6,6 +6,7 @@ import { getMemberFromGuild, getRoleFromClient } from '../../utils/discord';
 import { getServerId } from '../../utils/membership';
 import { memberHasRole } from '../../utils/dbRoles';
 import { logger } from '../../lib/logger';
+import { promoteEmbed } from '../../utils/embedConfig/embeds.ts';
 
 export const definition = new SlashCommandBuilder()
   .setName('promote')
@@ -129,8 +130,9 @@ export async function execute(
 
   await syncMember(targetMember);
 
-  await interaction.reply(
-    `✅ **Użytkownik ${targetUser.username} otrzymał niezbędne rangi!**\n` +
-    `👤 **Nadano przez:** ${interaction.user.username}\n`
-  );
+  await interaction.reply({
+    embeds: [
+      promoteEmbed(targetUser.id, interaction.user.id)
+    ]
+  });
 }

@@ -2,8 +2,7 @@ import { Client, GuildMember } from 'discord.js';
 import { GuildConfigModel } from '../../db/models/GuildConfig';
 import { logger } from '../../lib/logger';
 import { syncMember } from '../../sync/syncMembers';
-import { recruWelcomeEmbed, recruDSmemberKickEmbed } from '../../utils/embeds';
-import { sendEmbed } from '../../utils/embedBuilder';
+import { recruWelcomeEmbed, recruDSmemberKickEmbed } from '../../utils/embedConfig/embeds';
 import { getServerId } from '../../utils/membership';
 import { getChannelFromClient, getRoleFromClient } from '../../utils/discord';
 import { memberHasRole } from '../../utils/dbRoles';
@@ -37,9 +36,10 @@ export async function addRecru(member: GuildMember, client: Client) {
     await member.roles.add(role);
     logger.info(`addRecru: nadano rolę enlister dla ${member.user.tag} w ds_recru.`);
     await syncMember(member);
+    return;
 
   } else if(await memberHasRole(member, ['darkStar'], 'all')) {
-    sendEmbed(member, recruDSmemberKickEmbed(member));
+    member.send({ embeds: [recruDSmemberKickEmbed(member)] });
     member.kick('Już przeszedł rekrutacje.').catch(() => {});
     return;
   }
@@ -67,7 +67,7 @@ export async function addRecru(member: GuildMember, client: Client) {
       if (!channel || !channel.isTextBased() || channel.isDMBased()) {
         return;
       }
-      sendEmbed(channel, recruWelcomeEmbed(member));
+      channel.send({ embeds: [recruWelcomeEmbed(member)] });
     }
 
   } catch (error) {

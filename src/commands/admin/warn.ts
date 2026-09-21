@@ -1,7 +1,7 @@
 import { MessageFlags, SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
 import { WarnModel } from '../../db/models/Warn';
 import { getServerId } from '../../utils/membership';
-import { warnEmbed } from '../../utils/embeds';
+import { warnEmbed } from '../../utils/embedConfig/embeds';
 
 export const definition = new SlashCommandBuilder()
   .setName('warn')

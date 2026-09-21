@@ -2,7 +2,7 @@ import { MessageFlags, SlashCommandBuilder, type ChatInputCommandInteraction } f
 import { MemberModel } from '../../db/models/Member';
 import { WarnModel } from '../../db/models/Warn';
 import { getServerId } from '../../utils/membership';
-import { warnMultipleEmbed } from '../../utils/embeds';
+import { warnMultipleEmbed } from '../../utils/embedConfig/embeds';
 
 export const definition = new SlashCommandBuilder()
   .setName('warn-multiple')

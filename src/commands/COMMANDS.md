@@ -61,7 +61,7 @@ Seed ustawia poczatkowo `command-management` tylko na DS Main i daje do niej dos
 
 ### `src/commands/syncCommandConfigs.ts`
 
-Przy kazdym starcie sprawdza `commandDefinitions.ts` i tworzy brakujace rekordy `CommandConfig`. Aktualizuje opis komendy, ale nie zmienia istniejacych `allowedRoles` i nie wlacza komendy na guildach.
+Przy kazdym starcie sprawdza `commandRegistry.ts` i tworzy brakujace rekordy `CommandConfig`. Aktualizuje opis komendy, ale nie zmienia istniejacych `allowedRoles` i nie wlacza komendy na guildach.
 
 ### `src/utils/dbRoles.ts`
 
@@ -75,7 +75,7 @@ Przy kazdym starcie sprawdza `commandDefinitions.ts` i tworzy brakujace rekordy 
 
 Rejestracja komend jest rozdzielona na kilka plikow:
 
-- `commandDefinitions.ts` - centralna mapa nazw komend i ich `SlashCommandBuilder`; jest uzywana przez synchronizacje i rejestracje Discorda.
+- `commandRegistry.ts` - jedyne miejsce importow komend; udostepnia mape implementacji i mape definicji.
 - `commandsHandler.ts` - odbiera interakcje Discorda, obsluguje autocomplete i uruchamia `execute()`.
 - `commandAccess.ts` - sprawdza kontekst serwera, `isActive`, `enabledCommands` i role uzytkownika.
 - `commandRegistrar.ts` - synchronizuje komendy jednego serwera z Discord REST API.
@@ -116,33 +116,22 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 Nazwa w `setName()` musi byc mala, bez spacji i zgodna z nazwa uzywana w bazie danych.
 
-### 2. Dodaj implementacje do `commandsHandler.ts`
+### 2. Dodaj komendę do `commandRegistry.ts`
 
-Dodaj import modułu i wpis do mapy wykonywanych komend:
-
-```ts
-import * as exampleCommand from './misc/example';
-
-[exampleCommand.name, exampleCommand]
-```
-
-Bez tego Discord moze pokazac zarejestrowana komende, ale bot nie bedzie mial implementacji do wykonania.
-
-### 3. Dodaj definicje do `commandDefinitions.ts`
-
-Dodaj import oraz wpis do mapy:
+Dodaj import modułu i jeden wpis do tablicy `commandModules`:
 
 ```ts
 import * as exampleCommand from './misc/example';
 
-[exampleCommand.name, exampleCommand.definition]
+[...,
+ exampleCommand]
 ```
 
-Bez tego komenda nie bedzie znana rejestratorowi i nie trafi na Discorda.
+Registry automatycznie tworzy mape implementacji dla handlera oraz mape definicji dla rejestratora. Nie dodawaj tej samej komendy do innych map.
 
-### 4. Synchronizacja z `CommandConfig`
+### 3. Synchronizacja z `CommandConfig`
 
-Po restarcie `syncCommandConfigs()` porownuje definicje z `commandDefinitions.ts` z kolekcja `CommandConfig` i tworzy brakujace rekordy.
+Po restarcie `syncCommandConfigs()` porownuje definicje z `commandRegistry.ts` z kolekcja `CommandConfig` i tworzy brakujace rekordy.
 
 Nowa komenda jest tworzona z:
 
@@ -153,7 +142,7 @@ isActive: true
 
 Synchronizacja nie wlacza komendy na zadnym serwerze i nie zmienia istniejacych rol dostepu. Dostep nadaje sie dopiero przez `command-management`.
 
-### 5. Nadaj role dostepu
+### 4. Nadaj role dostepu
 
 Nie edytuj recznie MongoDB. Uzyj:
 
@@ -163,7 +152,7 @@ Nie edytuj recznie MongoDB. Uzyj:
 
 Komenda zapisze `officer` w `CommandConfig.allowedRoles`.
 
-### 6. Wlacz komende na serwerze
+### 5. Wlacz komende na serwerze
 
 Uzyj:
 
@@ -188,7 +177,7 @@ await registerGuildCommandsForGuild(guildId);
 Funkcja:
 
 1. pobiera konfiguracje guilda z MongoDB,
-2. wybiera definicje z `commandDefinitions`,
+2. wybiera definicje z `commandRegistry`,
 3. pobiera aktualne komendy z Discorda,
 4. porownuje oba zestawy,
 5. wykonuje `PUT` tylko przy zmianie.
@@ -215,7 +204,7 @@ export async function autocomplete(interaction: AutocompleteInteraction) {
 
 ## Zmiana lub usuwanie komendy
 
-Zmiana opisu albo opcji wymaga aktualizacji pliku komendy. Po restarcie `commandDefinitions` i `commandRegistrar` odswiezaja definicje na Discordzie dla guildow, na ktorych komenda jest wlaczona.
+Zmiana opisu albo opcji wymaga aktualizacji pliku komendy. Po restarcie `commandRegistry` i `commandRegistrar` odswiezaja definicje na Discordzie dla guildow, na ktorych komenda jest wlaczona.
 
 Usuniecie implementacji z kodu nie usuwa automatycznie nazwy z `GuildConfig.enabledCommands` ani starej komendy z Discorda. Najpierw usun dostep przez `command-management`, potem usun modul i jego wpisy z map. W razie potrzeby wykonaj dodatkowa migracje danych.
 
@@ -224,15 +213,14 @@ Usuniecie implementacji z kodu nie usuwa automatycznie nazwy z `GuildConfig.enab
 - Komenda nie pojawia sie na serwerze: brakuje jej w `GuildConfig.enabledCommands` albo nie wykonano synchronizacji.
 - Komenda jest widoczna, ale odmawia dostepu: uzytkownik nie ma roli z `CommandConfig.allowedRoles` albo nie ma zsynchronizowanej roli w `Member.mainRoles`.
 - Autocomplete jest puste: wartosc nie istnieje w odpowiednim modelu MongoDB albo opcja nie ma `.setAutocomplete(true)`.
-- Bot nie startuje po dodaniu komendy: sprawdz importy w `commandDefinitions.ts` i `commandsHandler.ts` oraz diagnostyke TypeScript.
+- Bot nie startuje po dodaniu komendy: sprawdz import w `commandRegistry.ts` oraz diagnostyke TypeScript.
 - `test` lub inna nowa komenda aktywuje sie sama: sprawdz, czy nie zostala dopisana do `GuildConfig.enabledCommands` w `seed.ts`.
 
 ## Checklista przed uruchomieniem
 
 - [ ] Plik komendy znajduje sie w poprawnej kategorii.
 - [ ] Komenda eksportuje `definition`, `name` i `execute`.
-- [ ] Komenda jest dodana do mapy w `commandsHandler.ts`.
-- [ ] Komenda jest dodana do mapy w `commandDefinitions.ts`.
+- [ ] Komenda jest dodana do tablicy `commandModules` w `commandRegistry.ts`.
 - [ ] Po restarcie definicja pojawila sie w `CommandConfig`.
 - [ ] Role dostepu nadano przez `command-management`.
 - [ ] Serwery dostepu ustawiono przez `command-management`.

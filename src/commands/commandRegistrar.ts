@@ -2,6 +2,7 @@ import { REST, Routes, type APIApplicationCommand } from 'discord.js';
 import { GuildConfigModel } from '../db/models/GuildConfig';
 import { env } from '../lib/env';
 import { logger } from '../lib/logger';
+import { commandDefinitions } from './commandRegistry';
 
 type CommandDefinition = {
   name: string;
@@ -71,7 +72,6 @@ function commandsMatch(
 }
 
 export async function registerGuildCommandsForGuild(guildId: string) {
-  const { commandDefinitions } = await import('./commandDefinitions');
   const guildConfig = await GuildConfigModel.findOne({ guildId }).lean();
   if (!guildConfig) {
     throw new Error(`Brak konfiguracji gildii ${guildId}`);
